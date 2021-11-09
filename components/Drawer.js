@@ -21,7 +21,7 @@ const Drawer = ({ isOpen, setIsOpen }) => {
     >
       {/* drawer content */}
       <div
-        className={`w-screen max-w-lg right-0 absolute px-7 bg-white h-full shadow-xl delay-300 duration-500  ease-in-out transition-all transform ${
+        className={`w-screen max-w-3xl lg:max-w-lg right-0 absolute px-7 bg-white h-full shadow-xl delay-300 duration-500  ease-in-out transition-all transform ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
