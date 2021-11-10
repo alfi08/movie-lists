@@ -21,7 +21,7 @@ const Drawer = ({ isOpen, setIsOpen }) => {
     >
       {/* drawer content */}
       <div
-        className={`w-screen max-w-3xl lg:max-w-lg right-0 absolute px-7 bg-white h-full shadow-xl delay-300 duration-500  ease-in-out transition-all transform ${
+        className={`w-screen overflow-y-scroll max-w-3xl lg:max-w-lg right-0 absolute px-7 bg-white h-full shadow-xl delay-300 duration-500  ease-in-out transition-all transform ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -54,9 +54,9 @@ const Drawer = ({ isOpen, setIsOpen }) => {
           <MovieListDropdown />
         </div>
 
-        <div className="my-6">
+        <div className="my-6 ">
           <Title>Daftar Film</Title>
-          <div className="movies">
+          <div className="movies px-4">
             {movies.map((movie) => (
               <List key={movie.id} movie={movie} type="delete" />
             ))}

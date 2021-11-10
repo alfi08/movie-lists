@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 const AppContext = createContext();
 
 export function AppWrapper({ children }) {
-  const [title, setTitle] = useState("10 film sadis terbaik!");
+  const [title, setTitle] = useState("film terbaik!");
   const [movies, setMovies] = useState([]);
   const [movieList, setMovieList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -19,9 +19,16 @@ export function AppWrapper({ children }) {
       const updatedMovies = movies.filter((m) => m.id !== movie.id);
       setMovies(updatedMovies);
     } else {
-      setMovies([...movies, movie]);
+      if(!checkExisting(movie.id)){
+        setMovies([...movies, movie]);
+      }
     }
   };
+
+  const checkExisting = (id) => {
+    const m =  movies.filter(m => m.id === id)
+    return m.length;
+  }
 
   const findMovie = (title) => async (e) => {
     e.preventDefault();
