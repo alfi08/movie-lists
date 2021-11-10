@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAppContext } from "../context/AppContext";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Input from "./Input";
 import Title from "./Title";
 import List from "./List";
@@ -8,8 +9,24 @@ import Loader from "./Loader";
 
 const Drawer = ({ isOpen, setIsOpen }) => {
   const [movieTitle, setMovieTitle] = useState("");
-  const { title, updateTitle, movies, findMovie, loading, errorMessage } =
-    useAppContext();
+  const {
+    title,
+    updateTitle,
+    movies,
+    updateMovies,
+    findMovie,
+    loading,
+    errorMessage,
+  } = useAppContext();
+
+  const handleOnDragEnd = (result) => {
+    if(!result.destination) return;
+    const items = Array.from(movies);
+    const [reorderItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderItem);
+
+    updateMovies(items);
+  };
 
   return (
     <div
@@ -54,13 +71,42 @@ const Drawer = ({ isOpen, setIsOpen }) => {
           <MovieListDropdown />
         </div>
 
-        <div className="my-6 ">
+        <div className="my-6 h-full w-full">
           <Title>Daftar Film</Title>
-          <div className="movies px-4">
-            {movies.map((movie) => (
-              <List key={movie.id} movie={movie} type="delete" />
-            ))}
-            {!movies.length && <div className="text-center text-gray-500">Daftar film masih kosong!</div>}
+          <div className="movies px-4 h-full w-full">
+            {movies.length ? (
+              // drag and drop
+              <DragDropContext onDragEnd={handleOnDragEnd}>
+                <Droppable droppableId="movies">
+                  {(provided) => (
+                    <div className="h-full w-full" {...provided.droppableProps} ref={provided.innerRef}>
+                      {movies.map((movie, index) => (
+                        <Draggable
+                          key={movie.id}
+                          draggableId={"" + movie.id}
+                          index={index}
+                        >
+                          {(provide) => (
+                            <List
+                              movie={movie}
+                              type="delete"
+                              ref={provide.innerRef}
+                              draggable={provide.draggableProps}
+                              dragHandle={provide.dragHandleProps}
+                            />
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            ) : (
+              <div className="text-center text-gray-500">
+                Daftar film masih kosong!
+              </div>
+            )}
           </div>
         </div>
       </div>

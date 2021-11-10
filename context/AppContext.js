@@ -13,6 +13,10 @@ export function AppWrapper({ children }) {
     setTitle(e.target.value);
   };
 
+  const updateMovies = (movies) => {
+    setMovies(movies);
+  }
+
   const manipulateMovie = (movie, type) => (e) => {
     e.preventDefault();
     if (type === "delete") {
@@ -60,6 +64,7 @@ export function AppWrapper({ children }) {
     errorMessage,
     updateTitle,
     manipulateMovie,
+    updateMovies,
     findMovie,
   };
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
