@@ -1,12 +1,36 @@
 import Head from "next/head";
 import Card from "../components/Card";
 import Drawer from "../components/Drawer";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { toPng } from "html-to-image";
 import { useAppContext } from "../context/AppContext";
 
 const Home = () => {
+  const elRef = useRef(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const { title, movies } = useAppContext();
+  const [hiddenEl, setHiddenEl] = useState(false);
+
+  const htmlToImageHandler = useCallback(() => {
+    if (elRef.current === null) {
+      return;
+    }
+
+    setHiddenEl(true);
+
+    toPng(elRef.current, { cacheBust: true })
+      .then((dataUrl) => {
+        const link = document.createElement("a");
+        link.download = "movie.png";
+        link.href = dataUrl;
+        link.click();
+        setHiddenEl(false);
+      })
+      .catch((err) => {
+        setHiddenEl(false);
+        console.log(err);
+      });
+  }, [elRef]);
 
   return (
     <div className="font-Poppins box-border">
@@ -27,17 +51,17 @@ const Home = () => {
 
       <Drawer isOpen={openDrawer} setIsOpen={setOpenDrawer} />
 
-      <div className="bg-dark-background min-h-screen pb-12">
+      <div ref={elRef} className="bg-dark-background min-h-screen pb-12">
         {/* edit content button */}
         <button
           onClick={() => setOpenDrawer(true)}
-          className="absolute right-12 top-12 lg:right-6 lg:top-6 text-5xl lg:text-xl hover:text-gray-400 text-white p-1 transition-all delay-100"
+          className={`absolute right-12 top-12 lg:right-6 lg:top-6 text-5xl lg:text-xl hover:text-gray-400 text-white p-1 transition-all delay-100 ${!!hiddenEl && 'hidden'}`}
         >
           <i className="fas fa-pen"></i>
         </button>
 
         {/* title */}
-        <h1 className="text-white text-center text-6xl lg:text-3xl pt-16  pb-16 lg:pb-6">
+        <h1 className="text-white text-center text-6xl pt-16  pb-16 lg:pb-6">
           {title}
         </h1>
 
@@ -52,6 +76,12 @@ const Home = () => {
             </div>
           )}
         </div>
+      </div>
+      <div
+        className="text-center p-4 bg-green-900 cursor-pointer text-gray-100 font-bold text-xl"
+        onClick={htmlToImageHandler}
+      >
+        download as image
       </div>
     </div>
   );
